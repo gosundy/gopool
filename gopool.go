@@ -13,7 +13,7 @@ type GoPool struct {
 	workWg sync.WaitGroup
 	maxWorker int
 	maxJob int
-	jobs chan *Job
+	jobs chan Job
 	ctx context.Context
 	cancelFunc context.CancelFunc
 	flag bool
@@ -35,7 +35,7 @@ func NewGoPool(workers int,queueLen int)*GoPool{
 		pool.maxJob=queueLen
 	}
 	pool.ctx,pool.cancelFunc=context.WithCancel(context.Background())
-	pool.jobs=make(chan *Job,pool.maxJob)
+	pool.jobs=make(chan Job,pool.maxJob)
 	return pool
 }
 func (pool *GoPool)run(){
@@ -46,7 +46,7 @@ func (pool *GoPool)run(){
 		go worker.start()
 	}
 }
-func(pool *GoPool)Dispatch(job *Job){
+func(pool *GoPool)Dispatch(job Job){
 	pool.jobWg.Add(1)
 	if pool.flag==false{
 		pool.flag=true
